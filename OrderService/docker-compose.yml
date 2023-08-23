@@ -1,0 +1,13 @@
+version: '3.1'
+services:
+  application:
+    container_name: 'order-service'
+    image: item-service
+    ports:
+      - '8081:8081'
+    profiles: ['order-service']
+    environment:
+      POSTGRES_JDBC_USER: orderdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5433/orderdb"
+      SPRING_PROFILES_ACTIVE: local

@@ -1,0 +1,19 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: payment-service
+  rabbitmq:
+    host: localhost
+  jpa:
+    show-sql: true
+    database: postgresql
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    username: paymentdbuser
+    password: piratepassword
+    url: jdbc:postgresql://localhost:5434/paymentdb

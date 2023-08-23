@@ -1,0 +1,13 @@
+version: '3.1'
+services:
+  application:
+    container_name: 'payment-service'
+    image: payment-service
+    ports:
+      - '8082:8082'
+    profiles: ['payment-service']
+    environment:
+      POSTGRES_JDBC_USER: paymentdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5434/paymentdb"
+      SPRING_PROFILES_ACTIVE: local

@@ -1,0 +1,5 @@
+insert into order_entity (order_number, ordered_item_name, sum, payed, shipped, time_of_order) values ((select nextval('order_number_generator')), 'Test item', 20, false, false, null);
+insert into order_entity (order_number, ordered_item_name, sum, payed, shipped, time_of_order) values ((select nextval('order_number_generator')), 'Test item 2', 20, false, false, null);
+insert into order_entity (order_number, ordered_item_name, sum, payed, shipped, time_of_order) values ((select nextval('order_number_generator')), 'Test item 3', 20, false, false, null);
+insert into order_entity (order_number, ordered_item_name, sum, payed, shipped, time_of_order) values ((select nextval('order_number_generator')), 'Test item 4', 20, false, false, null);
+insert into order_entity (order_number, ordered_item_name, sum, payed, shipped, time_of_order) values ((select nextval('order_number_generator')), 'Test item 5', 20, false, false, null);

@@ -1,0 +1,13 @@
+version: '3.1'
+services:
+  application:
+    container_name: 'item-service'
+    image: item-service
+    ports:
+      - '8084:8084'
+    profiles: ['item-service']
+    environment:
+      POSTGRES_JDBC_USER: itemdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/itemdb"
+      SPRING_PROFILES_ACTIVE: local

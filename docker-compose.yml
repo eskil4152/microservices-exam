@@ -1,0 +1,170 @@
+version: '3.1'
+services:
+  rabbitmq:
+    container_name: 'rabbitmq'
+    hostname: "rabbitmq"
+    image: rabbitmq:3.11.3-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    profiles:
+      - 'service'
+      - 'rabbit'
+      - 'all'
+    volumes:
+      - ./rabbitmq-config/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./rabbitmq-config/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+
+  itemDatabase:
+    container_name: 'item-db'
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    profiles:
+      - 'database'
+      - 'all'
+    environment:
+      - POSTGRES_DB=itemdb
+      - POSTGRES_USER=itemdbuser
+      - POSTGRES_PASSWORD=piratepassword
+
+  itemservice:
+    container_name: 'itemservice'
+    image: itemservice:latest
+    ports:
+      - "8084:8084"
+    profiles:
+      - 'service'
+      - 'itemservice'
+      - 'all'
+    environment:
+      POSTGRES_JDBC_USER: itemdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://itemDatabase:5432/itemdb"
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.service-url.defaultZone: "http://discoveryservice:8761/eureka/"
+      spring_rabbitmq_host: "rabbitmq"
+    depends_on:
+      - rabbitmq
+      - discoveryservice
+
+  orderDatabase:
+    container_name: 'order-db'
+    image: postgres:alpine
+    ports:
+      - '5433:5432'
+    profiles:
+      - 'database'
+      - 'all'
+    environment:
+      - POSTGRES_DB=orderdb
+      - POSTGRES_USER=orderdbuser
+      - POSTGRES_PASSWORD=piratepassword
+
+  orderservice:
+    container_name: 'orderservice'
+    image: orderservice:latest
+    ports:
+      - "8081:8081"
+    profiles:
+      - 'service'
+      - 'all'
+    environment:
+      POSTGRES_JDBC_USER: orderdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://orderDatabase:5432/orderdb"
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.service-url.defaultZone: "http://discoveryservice:8761/eureka/"
+      spring_rabbitmq_host: "rabbitmq"
+    depends_on:
+      - rabbitmq
+      - discoveryservice
+
+  paymentDatabase:
+    container_name: 'payment-db'
+    image: postgres:alpine
+    ports:
+      - '5434:5432'
+    profiles:
+      - 'database'
+    environment:
+      - POSTGRES_DB=paymentdb
+      - POSTGRES_USER=paymentdbuser
+      - POSTGRES_PASSWORD=piratepassword
+
+  paymentservice:
+    container_name: 'paymentservice'
+    image: paymentservice:latest
+    ports:
+      - "8082:8082"
+    profiles:
+      - 'service'
+      - 'all'
+    environment:
+      POSTGRES_JDBC_USER: paymentdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://paymentDatabase:5432/paymentdb"
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.service-url.defaultZone: "http://discoveryservice:8761/eureka/"
+      spring_rabbitmq_host: "rabbitmq"
+    depends_on:
+      - rabbitmq
+      - discoveryservice
+
+  shippingDatabase:
+    container_name: 'shipping-db'
+    image: postgres:alpine
+    ports:
+      - '5435:5432'
+    profiles:
+      - 'database'
+      - 'all'
+    environment:
+      - POSTGRES_DB=shippingdb
+      - POSTGRES_USER=shippingdbuser
+      - POSTGRES_PASSWORD=piratepassword
+
+  shippingservice:
+    container_name: 'shippingservice'
+    image: shippingservice:latest
+    ports:
+      - "8083:8083"
+    profiles:
+      - 'service'
+      - 'all'
+    environment:
+      POSTGRES_JDBC_USER: shippingdbuser
+      POSTGRES_JDBC_PASS: piratepassword
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://shippingDatabase:5432/shippingdb"
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.service-url.defaultZone: "http://discoveryservice:8761/eureka/"
+      spring_rabbitmq_host: "rabbitmq"
+    depends_on:
+      - rabbitmq
+      - discoveryservice
+
+  gatewayservice:
+    container_name: 'gatewayservice'
+    image: gatewayservice:latest
+    ports:
+      - "8080:8080"
+    profiles:
+      - 'service'
+      - 'gatewayservice'
+      - 'all'
+    environment:
+      eureka.client.service-url.defaultZone: "http://discoveryservice:8761/eureka/"
+    depends_on:
+      - discoveryservice
+
+  discoveryservice:
+    container_name: 'discoveryservice'
+    image: discoveryservice:latest
+    ports:
+      - "8761:8761"
+    profiles:
+      - 'service'
+      - 'discoveryservice'
+      - 'all'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
